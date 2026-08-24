@@ -16,6 +16,7 @@
   let saving = $state(false);
   let lastSaved = $state<number | null>(null);
   let saveTimer: ReturnType<typeof setTimeout> | null = null;
+  let win = getCurrentWebviewWindow();
 
   let renderedMarkdown = $derived(renderMarkdown(noteContent));
 
@@ -23,7 +24,6 @@
     let unlisten: (() => void) | undefined;
 
     const setup = async () => {
-      const win = getCurrentWebviewWindow();
       unlisten = await win.onFocusChanged(({ payload: focused }) => {
         if (focused) void loadCurrentNote();
       });
@@ -31,16 +31,24 @@
     };
 
     void setup();
-
     return () => { unlisten?.(); };
   });
+
+  // ===== Dragging =====
+  function onTitlebarMousedown(e: MouseEvent) {
+    // Only start drag on left-click, not on buttons
+    const target = e.target as HTMLElement;
+    if (target.closest('button')) return;
+    if (e.buttons === 1) {
+      void win.startDragging();
+    }
+  }
 
   // ===== Load current note (called on focus) =====
   async function loadCurrentNote() {
     const path = await getCurrentNote();
     if (path === loadedNotePath) return;
 
-    // Save current note before switching
     if (saveTimer) { clearTimeout(saveTimer); saveTimer = null; }
     if (currentNotePath && noteContent) {
       try { await doSave(); } catch { /* ignore */ }
@@ -102,9 +110,9 @@
 </script>
 
 <div class="floating-container">
-  <!-- Custom title bar (drag region) -->
-  <div class="floating-titlebar">
-    <div class="title-drag-area" data-tauri-drag-region>
+  <!-- Custom title bar -->
+  <div class="floating-titlebar" onmousedown={onTitlebarMousedown}>
+    <div class="title-drag-area">
       <span class="title-text">📌 {noteName || 'EasyNote'}</span>
     </div>
     <div class="title-actions">
@@ -154,14 +162,6 @@
 </div>
 
 <style>
-  .title-drag-area {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    cursor: move;
-    min-width: 0;
-    overflow: hidden;
-  }
   .floating-titlebar {
     display: flex;
     align-items: center;
@@ -170,6 +170,18 @@
     border-bottom: 1px solid var(--border);
     user-select: none;
     min-height: 32px;
+    cursor: default;
+  }
+  .title-drag-area {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    overflow: hidden;
+    cursor: grab;
+  }
+  .title-drag-area:active {
+    cursor: grabbing;
   }
   .title-actions {
     display: flex;
