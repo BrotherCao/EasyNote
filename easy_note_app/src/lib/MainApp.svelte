@@ -39,7 +39,7 @@
   let confirmResolver: ((v: boolean) => void) | null = null;
 
   // ===== Derived =====
-  let renderedMarkdown = $derived(renderMarkdown(noteContent));
+  let renderedMarkdown = $derived(renderMarkdown(noteContent, selectedNote ? dirName(selectedNote) : undefined));
   let currentNoteName = $derived(selectedNote ? stripMdExt(baseName(selectedNote)) : '');
   let notes = $derived(selectedFolder ? folderNotes : rootNotes);
 

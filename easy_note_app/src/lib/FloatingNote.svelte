@@ -22,7 +22,7 @@
   let saveTimer: ReturnType<typeof setTimeout> | null = null;
   let win = getCurrentWebviewWindow();
 
-  let renderedMarkdown = $derived(renderMarkdown(noteContent));
+  let renderedMarkdown = $derived(renderMarkdown(noteContent, currentNotePath ? dirName(currentNotePath) : undefined));
 
   onMount(() => {
     let unlistenFocus: (() => void) | undefined;
