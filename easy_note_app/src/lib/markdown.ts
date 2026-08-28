@@ -1,6 +1,7 @@
 import MarkdownIt from 'markdown-it';
 import { convertFileSrc } from '@tauri-apps/api/core';
-import { joinPath } from './types';
+// @ts-expect-error - markdown-it-katex has no types
+import katexPlugin from 'markdown-it-katex';
 
 const md = new MarkdownIt({
   html: false,
@@ -9,7 +10,10 @@ const md = new MarkdownIt({
   breaks: true,
 });
 
-// Default render for image: convert relative paths to asset protocol URLs
+// KaTeX math formula support ($...$ inline, $$...$$ block)
+md.use(katexPlugin);
+
+// Image renderer: store absolute path in data-img-src, fix src in post-processing (Svelte action)
 const defaultImageRender = md.renderer.rules.image ||
   function (tokens, idx, options, _env, self) {
     return self.renderToken(tokens, idx, options);
@@ -19,8 +23,7 @@ md.renderer.rules.image = function (tokens, idx, options, env, self) {
   const token = tokens[idx];
   const srcIndex = token.attrIndex('src');
   if (srcIndex >= 0) {
-    let src = token.attrs?.[srcIndex]?.[1] || '';
-    // Only convert relative paths (not http URLs, not absolute paths starting with asset:)
+    const src = token.attrs?.[srcIndex]?.[1] || '';
     if (
       src &&
       !src.startsWith('http://') &&
@@ -28,21 +31,21 @@ md.renderer.rules.image = function (tokens, idx, options, env, self) {
       !src.startsWith('asset:') &&
       !src.startsWith('data:')
     ) {
-      // Resolve relative to note directory if available
       const noteDir = env?.noteDir as string | undefined;
-      if (noteDir) {
-        const absPath = joinPath(noteDir, src);
-        try {
-          src = convertFileSrc(absPath);
-        } catch {
-          // convertFileSrc not available (e.g., in SSR), keep original
-        }
-      }
-      token.attrs![srcIndex][1] = src;
+      const absPath = noteDir ? joinPathNormalized(noteDir, src) : src;
+      token.attrSet('data-img-src', absPath);
+      token.attrs![srcIndex][1] = '';
     }
   }
   return defaultImageRender(tokens, idx, options, env, self);
 };
+
+function joinPathNormalized(base: string, name: string): string {
+  const sep = base.includes('\\') ? '\\' : '/';
+  const trimmedBase = base.replace(/[\\/]+$/, '');
+  const normalizedName = name.replace(/\//g, sep).replace(/\\/g, sep);
+  return trimmedBase + sep + normalizedName;
+}
 
 export function renderMarkdown(content: string, noteDir?: string): string {
   return md.render(content, { noteDir });

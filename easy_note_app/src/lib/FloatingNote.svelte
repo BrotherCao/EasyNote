@@ -7,6 +7,7 @@
   } from '$lib/fs';
   import { getConfig } from '$lib/fs';
   import { renderMarkdown } from '$lib/markdown';
+  import { fixImages } from '$lib/fixImages';
   import { baseName, stripMdExt, joinPath, dirName } from '$lib/types';
   import type { AppConfig } from '$lib/types';
 
@@ -182,7 +183,7 @@
     <div class="floating-editor">
       {#if showPreview}
         <div class="floating-preview">
-          <div class="markdown-body">{@html renderedMarkdown}</div>
+          <div class="markdown-body" use:fixImages>{@html renderedMarkdown}</div>
         </div>
       {:else}
         <textarea

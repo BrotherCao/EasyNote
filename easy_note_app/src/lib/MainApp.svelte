@@ -8,6 +8,7 @@
     setCurrentNote, writeBinaryFile, generateTimestampName,
   } from '$lib/fs';
   import { renderMarkdown } from '$lib/markdown';
+  import { fixImages } from '$lib/fixImages';
   import { joinPath, baseName, stripMdExt, dirName } from '$lib/types';
   import type { DirEntry, AppConfig } from '$lib/types';
 
@@ -458,7 +459,7 @@
             ></textarea>
           </div>
           <div class="preview-pane" onclick={onPreviewClick}>
-            <div class="markdown-body">{@html renderedMarkdown}</div>
+            <div class="markdown-body" use:fixImages>{@html renderedMarkdown}</div>
           </div>
         </div>
 
