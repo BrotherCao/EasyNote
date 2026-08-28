@@ -8,7 +8,7 @@
   } from '$lib/fs';
   import { getConfig } from '$lib/fs';
   import { renderMarkdown } from '$lib/markdown';
-  import { fixImages } from '$lib/fixImages';
+  import { fixImagesInNode } from '$lib/fixImages';
   import { baseName, stripMdExt, joinPath, dirName } from '$lib/types';
   import type { AppConfig } from '$lib/types';
 
@@ -25,6 +25,15 @@
   let win = getCurrentWebviewWindow();
 
   let renderedMarkdown = $derived(renderMarkdown(noteContent, currentNotePath ? dirName(currentNotePath) : undefined));
+
+  // ===== Effect: fix image srcs after markdown re-renders =====
+  let previewEl = $state<HTMLDivElement | null>(null);
+  $effect(() => {
+    renderedMarkdown;
+    if (previewEl) {
+      setTimeout(() => fixImagesInNode(previewEl), 0);
+    }
+  });
 
   onMount(() => {
     let unlistenFocus: (() => void) | undefined;
@@ -195,7 +204,7 @@
     <div class="floating-editor">
       {#if showPreview}
         <div class="floating-preview">
-          <div class="markdown-body" use:fixImages>{@html renderedMarkdown}</div>
+          <div class="markdown-body" bind:this={previewEl}>{@html renderedMarkdown}</div>
         </div>
       {:else}
         <textarea

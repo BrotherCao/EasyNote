@@ -9,7 +9,7 @@
     setCurrentNote, writeBinaryFile, generateTimestampName,
   } from '$lib/fs';
   import { renderMarkdown } from '$lib/markdown';
-  import { fixImages } from '$lib/fixImages';
+  import { fixImagesInNode } from '$lib/fixImages';
   import { joinPath, baseName, stripMdExt, dirName } from '$lib/types';
   import type { DirEntry, AppConfig } from '$lib/types';
 
@@ -44,6 +44,17 @@
   let renderedMarkdown = $derived(renderMarkdown(noteContent, selectedNote ? dirName(selectedNote) : undefined));
   let currentNoteName = $derived(selectedNote ? stripMdExt(baseName(selectedNote)) : '');
   let notes = $derived(selectedFolder ? folderNotes : rootNotes);
+
+  // ===== Effect: fix image srcs after markdown re-renders =====
+  let previewEl = $state<HTMLDivElement | null>(null);
+  $effect(() => {
+    // Track renderedMarkdown so effect re-runs when it changes
+    renderedMarkdown;
+    if (previewEl) {
+      // Defer to next tick so {@html} content is in DOM
+      setTimeout(() => fixImagesInNode(previewEl), 0);
+    }
+  });
 
   // ===== Lifecycle =====
   onMount(() => {
@@ -471,7 +482,7 @@
             ></textarea>
           </div>
           <div class="preview-pane" onclick={onPreviewClick}>
-            <div class="markdown-body" use:fixImages>{@html renderedMarkdown}</div>
+            <div class="markdown-body" bind:this={previewEl}>{@html renderedMarkdown}</div>
           </div>
         </div>
 
