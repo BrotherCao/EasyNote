@@ -18,6 +18,10 @@ export async function writeTextFile(path: string, content: string): Promise<void
   await invoke('write_text_file', { path, content });
 }
 
+export async function writeBinaryFile(path: string, data: Uint8Array): Promise<void> {
+  await invoke('write_binary_file', { path, data });
+}
+
 export async function createDirAll(path: string): Promise<void> {
   await invoke('create_dir_all', { path });
 }

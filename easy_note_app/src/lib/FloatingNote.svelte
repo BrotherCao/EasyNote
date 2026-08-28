@@ -2,12 +2,16 @@
   import { onMount } from 'svelte';
   import { getCurrentWebviewWindow } from '@tauri-apps/api/webviewWindow';
   import {
-    getCurrentNote, readTextFile, writeTextFile, hideFloatingWindow,
+    getCurrentNote, readTextFile, writeTextFile, writeBinaryFile,
+    createDirAll, hideFloatingWindow, generateTimestampName,
   } from '$lib/fs';
+  import { getConfig } from '$lib/fs';
   import { renderMarkdown } from '$lib/markdown';
-  import { baseName, stripMdExt } from '$lib/types';
+  import { baseName, stripMdExt, joinPath, dirName } from '$lib/types';
+  import type { AppConfig } from '$lib/types';
 
   // ===== State =====
+  let config = $state<AppConfig>({ notes_root: null, theme: 'system' });
   let currentNotePath = $state<string | null>(null);
   let loadedNotePath: string | null = null;
   let noteContent = $state('');
@@ -21,22 +25,27 @@
   let renderedMarkdown = $derived(renderMarkdown(noteContent));
 
   onMount(() => {
-    let unlisten: (() => void) | undefined;
+    let unlistenFocus: (() => void) | undefined;
+    let unlistenHide: (() => void) | undefined;
 
     const setup = async () => {
-      unlisten = await win.onFocusChanged(({ payload: focused }) => {
+      config = await getConfig();
+      unlistenFocus = await win.onFocusChanged(({ payload: focused }) => {
         if (focused) void loadCurrentNote();
+        else void doSave();
+      });
+      unlistenHide = await win.onCloseRequested(() => {
+        void doSave();
       });
       await loadCurrentNote();
     };
 
     void setup();
-    return () => { unlisten?.(); };
+    return () => { unlistenFocus?.(); unlistenHide?.(); };
   });
 
   // ===== Dragging =====
   function onTitlebarMousedown(e: MouseEvent) {
-    // Only start drag on left-click, not on buttons
     const target = e.target as HTMLElement;
     if (target.closest('button')) return;
     if (e.buttons === 1) {
@@ -107,7 +116,49 @@
     await doSave();
     await hideFloatingWindow();
   }
+
+  // ===== Image paste =====
+  async function onPaste(e: ClipboardEvent) {
+    if (!currentNotePath || !config.notes_root) return;
+    const items = e.clipboardData?.items;
+    if (!items) return;
+
+    for (const item of items) {
+      if (item.type.startsWith('image/')) {
+        e.preventDefault();
+        const blob = item.getAsFile();
+        if (!blob) continue;
+
+        const ext = blob.type.split('/')[1] || 'png';
+        const ts = await generateTimestampName();
+        const imgDir = joinPath(dirName(currentNotePath), 'images');
+        await createDirAll(imgDir);
+        const imgName = `${ts}.${ext}`;
+        const imgPath = joinPath(imgDir, imgName);
+
+        const arrayBuffer = await blob.arrayBuffer();
+        const uint8 = new Uint8Array(arrayBuffer);
+        await writeBinaryFile(imgPath, uint8);
+
+        const mdLink = `![image](images/${imgName})`;
+        const textarea = document.querySelector('.floating-editor textarea') as HTMLTextAreaElement | null;
+        if (textarea) {
+          const start = textarea.selectionStart;
+          const end = textarea.selectionEnd;
+          noteContent = noteContent.slice(0, start) + mdLink + '\n' + noteContent.slice(end);
+          setTimeout(() => {
+            textarea.selectionStart = textarea.selectionEnd = start + mdLink.length + 1;
+          }, 0);
+        } else {
+          noteContent += '\n' + mdLink + '\n';
+        }
+        void doSave();
+      }
+    }
+  }
 </script>
+
+<svelte:window on:paste={onPaste} />
 
 <div class="floating-container">
   <!-- Custom title bar -->
@@ -139,7 +190,7 @@
           oninput={onInput}
           onblur={() => void doSave()}
           onkeydown={onKeydown}
-          placeholder="输入 Markdown..."
+          placeholder="输入 Markdown... (Ctrl+V 粘贴图片)"
           spellcheck="false"
         ></textarea>
       {/if}

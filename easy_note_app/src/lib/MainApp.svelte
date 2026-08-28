@@ -5,7 +5,7 @@
     getConfig, setConfig, readTextFile, writeTextFile,
     listDir, createDirAll, removePath, renamePath,
     pathExists, pickFolder, toggleFloatingWindow,
-    setCurrentNote,
+    setCurrentNote, writeBinaryFile, generateTimestampName,
   } from '$lib/fs';
   import { renderMarkdown } from '$lib/markdown';
   import { joinPath, baseName, stripMdExt, dirName } from '$lib/types';
@@ -245,6 +245,46 @@
     }
   }
 
+  // ===== Image paste =====
+  async function onPaste(e: ClipboardEvent) {
+    if (!selectedNote || !config.notes_root) return;
+    const items = e.clipboardData?.items;
+    if (!items) return;
+
+    for (const item of items) {
+      if (item.type.startsWith('image/')) {
+        e.preventDefault();
+        const blob = item.getAsFile();
+        if (!blob) continue;
+
+        const ext = blob.type.split('/')[1] || 'png';
+        const ts = await generateTimestampName();
+        const imgDir = joinPath(dirName(selectedNote), 'images');
+        await createDirAll(imgDir);
+        const imgName = `${ts}.${ext}`;
+        const imgPath = joinPath(imgDir, imgName);
+
+        const arrayBuffer = await blob.arrayBuffer();
+        const uint8 = new Uint8Array(arrayBuffer);
+        await writeBinaryFile(imgPath, uint8);
+
+        const mdLink = `![image](images/${imgName})`;
+        const textarea = document.querySelector('.editor-pane textarea') as HTMLTextAreaElement | null;
+        if (textarea) {
+          const start = textarea.selectionStart;
+          const end = textarea.selectionEnd;
+          noteContent = noteContent.slice(0, start) + mdLink + '\n' + noteContent.slice(end);
+          setTimeout(() => {
+            textarea.selectionStart = textarea.selectionEnd = start + mdLink.length + 1;
+          }, 0);
+        } else {
+          noteContent += '\n' + mdLink + '\n';
+        }
+        void doSave();
+      }
+    }
+  }
+
   // ===== Prompt / Confirm dialogs =====
   function showPrompt(label: string, defaultVal = ''): Promise<string | null> {
     return new Promise((resolve) => {
@@ -295,6 +335,8 @@
     return `${d.getMonth() + 1}/${d.getDate()}`;
   }
 </script>
+
+<svelte:window on:paste={onPaste} />
 
 <!-- ===== Setup screen ===== -->
 {#if showSetup}

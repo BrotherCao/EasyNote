@@ -91,6 +91,17 @@ fn write_text_file(path: String, content: String) -> Result<(), String> {
 }
 
 #[tauri::command]
+fn write_binary_file(path: String, data: Vec<u8>) -> Result<(), String> {
+    let p = Path::new(&path);
+    if let Some(parent) = p.parent() {
+        if !parent.as_os_str().is_empty() && !parent.exists() {
+            fs::create_dir_all(parent).map_err(|e| e.to_string())?;
+        }
+    }
+    fs::write(&path, data).map_err(|e| e.to_string())
+}
+
+#[tauri::command]
 fn create_dir_all(path: String) -> Result<(), String> {
     fs::create_dir_all(&path).map_err(|e| e.to_string())
 }
@@ -247,6 +258,7 @@ pub fn run() {
             get_current_note,
             toggle_floating_window,
             hide_floating_window,
+            write_binary_file,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
