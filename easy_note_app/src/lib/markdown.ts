@@ -22,8 +22,9 @@ const defaultImageRender = md.renderer.rules.image ||
 md.renderer.rules.image = function (tokens, idx, options, env, self) {
   const token = tokens[idx];
   const srcIndex = token.attrIndex('src');
-  if (srcIndex >= 0) {
-    const src = token.attrs?.[srcIndex]?.[1] || '';
+  if (srcIndex >= 0 && token.attrs) {
+    const srcVal = token.attrs[srcIndex]?.[1];
+    const src = typeof srcVal === 'string' ? srcVal : '';
     if (
       src &&
       !src.startsWith('http://') &&
