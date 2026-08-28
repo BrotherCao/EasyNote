@@ -11,7 +11,9 @@ export function fixImagesInNode(node: HTMLElement | null) {
     const absPath = img.getAttribute('data-img-src');
     if (!absPath) return;
     try {
-      img.src = convertFileSrc(absPath);
+      // Normalize backslashes to forward slashes for cleaner asset URL
+      const normalized = absPath.replace(/\\/g, '/');
+      img.src = convertFileSrc(normalized);
     } catch (e) {
       console.error('fixImages: convertFileSrc failed for', absPath, e);
     }
