@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { getCurrentWebviewWindow } from '@tauri-apps/api/webviewWindow';
+  import { listen, emit } from '@tauri-apps/api/event';
   import {
     getCurrentNote, readTextFile, writeTextFile, writeBinaryFile,
     createDirAll, hideFloatingWindow, generateTimestampName,
@@ -28,6 +29,7 @@
   onMount(() => {
     let unlistenFocus: (() => void) | undefined;
     let unlistenHide: (() => void) | undefined;
+    let unlistenSync: (() => void) | undefined;
 
     const setup = async () => {
       config = await getConfig();
@@ -38,11 +40,19 @@
       unlistenHide = await win.onCloseRequested(() => {
         void doSave();
       });
+      // Listen for note-saved events from main window
+      unlistenSync = await listen<{ path: string; content: string }>('note-saved', (event) => {
+        const { path, content } = event.payload;
+        if (currentNotePath === path) {
+          loadedNotePath = path; // prevent reload from getCurrentNote on next focus
+          noteContent = content;
+        }
+      });
       await loadCurrentNote();
     };
 
     void setup();
-    return () => { unlistenFocus?.(); unlistenHide?.(); };
+    return () => { unlistenFocus?.(); unlistenHide?.(); unlistenSync?.(); };
   });
 
   // ===== Dragging =====
@@ -106,6 +116,8 @@
     try {
       await writeTextFile(currentNotePath, noteContent);
       lastSaved = Date.now();
+      // Broadcast to main window so it can sync
+      await emit('note-saved', { path: currentNotePath, content: noteContent });
     } catch (e) {
       console.error('Save failed:', e);
     }

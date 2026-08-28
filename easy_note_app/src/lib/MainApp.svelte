@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
+  import { listen } from '@tauri-apps/api/event';
   import { openUrl } from '@tauri-apps/plugin-opener';
   import {
     getConfig, setConfig, readTextFile, writeTextFile,
@@ -47,6 +48,14 @@
   // ===== Lifecycle =====
   onMount(() => {
     void init();
+    // Listen for note-saved events from floating window
+    const unlisten = listen<{ path: string; content: string }>('note-saved', (event) => {
+      const { path, content } = event.payload;
+      if (selectedNote === path && !isLoading) {
+        noteContent = content;
+      }
+    });
+    return () => { void unlisten.then((fn) => fn()); };
   });
 
   // ===== Init =====
@@ -154,6 +163,9 @@
     try {
       await writeTextFile(selectedNote, noteContent);
       lastSaved = Date.now();
+      // Broadcast to floating window so it can sync
+      const { emit } = await import('@tauri-apps/api/event');
+      await emit('note-saved', { path: selectedNote, content: noteContent });
     } catch (e) {
       console.error('Save failed:', e);
     }
