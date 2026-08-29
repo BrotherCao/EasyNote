@@ -14,23 +14,7 @@ export async function fixImagesInNode(node: HTMLElement | null) {
       const dataUrl = await invoke<string>('read_file_as_base64', { path: absPath });
       img.src = dataUrl;
     } catch (e) {
-      // Write error to diagnostic file
-      try {
-        await invoke('debug_write', { msg: 'IMG_ERR path=' + absPath + ' err=' + String(e) + '\n' });
-      } catch { /* ignore */ }
       console.error('fixImages failed for', absPath, e);
     }
-  }
-  // Write success diagnostic
-  const imgCount = imgs.length;
-  if (imgCount > 0) {
-    const report = imgs.map((img, i) => {
-      const src = img.getAttribute('src') || '';
-      const data = img.getAttribute('data-img-src') || '';
-      return 'img[' + i + ']: src_len=' + src.length + ' src_prefix=' + src.substring(0, 40) + ' data-img-src=' + data + ' naturalW=' + img.naturalWidth + ' complete=' + img.complete;
-    }).join('\n');
-    try {
-      await invoke('debug_write', { msg: 'FIX_DONE count=' + imgCount + '\n' + report + '\n' });
-    } catch { /* ignore */ }
   }
 }
