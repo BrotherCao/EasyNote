@@ -1,5 +1,4 @@
 import MarkdownIt from 'markdown-it';
-import { convertFileSrc } from '@tauri-apps/api/core';
 // @ts-expect-error - markdown-it-katex has no types
 import katexPlugin from 'markdown-it-katex';
 

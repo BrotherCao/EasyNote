@@ -1,21 +1,25 @@
-import { convertFileSrc } from '@tauri-apps/api/core';
+import { invoke } from '@tauri-apps/api/core';
 
 /**
- * Fix img[data-img-src] elements: convert disk path to asset protocol URL.
- * Call this after the markdown HTML is rendered.
+ * Fix img[data-img-src] elements: read the image file as base64 data URL.
+ * This bypasses the asset protocol entirely, avoiding path encoding issues.
  */
-export function fixImagesInNode(node: HTMLElement | null) {
+export async function fixImagesInNode(node: HTMLElement | null) {
   if (!node) return;
   const imgs = node.querySelectorAll<HTMLImageElement>('img[data-img-src]');
+  const promises: Promise<void>[] = [];
   imgs.forEach((img) => {
     const absPath = img.getAttribute('data-img-src');
     if (!absPath) return;
-    try {
-      // Normalize backslashes to forward slashes for cleaner asset URL
-      const normalized = absPath.replace(/\\/g, '/');
-      img.src = convertFileSrc(normalized);
-    } catch (e) {
-      console.error('fixImages: convertFileSrc failed for', absPath, e);
-    }
+    promises.push(
+      invoke<string>('read_file_as_base64', { path: absPath })
+        .then((dataUrl) => {
+          img.src = dataUrl;
+        })
+        .catch((e) => {
+          console.error('fixImages: read_file_as_base64 failed for', absPath, e);
+        })
+    );
   });
+  await Promise.all(promises);
 }

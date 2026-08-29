@@ -102,6 +102,54 @@ fn write_binary_file(path: String, data: Vec<u8>) -> Result<(), String> {
 }
 
 #[tauri::command]
+fn read_file_as_base64(path: String) -> Result<String, String> {
+    let data = fs::read(&path).map_err(|e| e.to_string())?;
+    use std::io::Write;
+    let mut buf = String::new();
+    buf.push_str("data:");
+    // Determine mime type from extension
+    let ext = Path::new(&path)
+        .extension()
+        .and_then(|e| e.to_str())
+        .unwrap_or("")
+        .to_lowercase();
+    let mime = match ext.as_str() {
+        "png" => "image/png",
+        "jpg" | "jpeg" => "image/jpeg",
+        "gif" => "image/gif",
+        "svg" => "image/svg+xml",
+        "webp" => "image/webp",
+        "bmp" => "image/bmp",
+        _ => "application/octet-stream",
+    };
+    buf.push_str(mime);
+    buf.push_str(";base64,");
+    // Use base64 crate via manual encoding
+    const CHARS: &[u8] = b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+    let mut i = 0;
+    while i < data.len() {
+        let b0 = data[i];
+        let b1 = if i + 1 < data.len() { data[i + 1] } else { 0 };
+        let b2 = if i + 2 < data.len() { data[i + 2] } else { 0 };
+
+        buf.push(CHARS[(b0 >> 2) as usize] as char);
+        buf.push(CHARS[(((b0 & 0x03) << 4) | (b1 >> 4)) as usize] as char);
+        if i + 1 < data.len() {
+            buf.push(CHARS[(((b1 & 0x0f) << 2) | (b2 >> 6)) as usize] as char);
+        } else {
+            buf.push('=');
+        }
+        if i + 2 < data.len() {
+            buf.push(CHARS[(b2 & 0x3f) as usize] as char);
+        } else {
+            buf.push('=');
+        }
+        i += 3;
+    }
+    Ok(buf)
+}
+
+#[tauri::command]
 fn create_dir_all(path: String) -> Result<(), String> {
     fs::create_dir_all(&path).map_err(|e| e.to_string())
 }
@@ -259,6 +307,7 @@ pub fn run() {
             toggle_floating_window,
             hide_floating_window,
             write_binary_file,
+            read_file_as_base64,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

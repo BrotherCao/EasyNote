@@ -48,11 +48,9 @@
   // ===== Effect: fix image srcs after markdown re-renders =====
   let previewEl = $state<HTMLDivElement | null>(null);
   $effect(() => {
-    // Track renderedMarkdown so effect re-runs when it changes
     renderedMarkdown;
     if (previewEl) {
-      // Defer to next tick so {@html} content is in DOM
-      setTimeout(() => fixImagesInNode(previewEl), 0);
+      setTimeout(() => void fixImagesInNode(previewEl), 0);
     }
   });
 

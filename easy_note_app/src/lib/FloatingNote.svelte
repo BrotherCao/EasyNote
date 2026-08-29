@@ -31,7 +31,7 @@
   $effect(() => {
     renderedMarkdown;
     if (previewEl) {
-      setTimeout(() => fixImagesInNode(previewEl), 0);
+      setTimeout(() => void fixImagesInNode(previewEl), 0);
     }
   });
 
