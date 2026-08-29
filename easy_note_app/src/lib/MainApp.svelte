@@ -45,12 +45,23 @@
   let currentNoteName = $derived(selectedNote ? stripMdExt(baseName(selectedNote)) : '');
   let notes = $derived(selectedFolder ? folderNotes : rootNotes);
 
-  // ===== Effect: fix image srcs after markdown re-renders =====
+  // ===== Image fix: MutationObserver on preview element =====
   let previewEl = $state<HTMLDivElement | null>(null);
+  let imgObserver: MutationObserver | null = null;
+
   $effect(() => {
+    // Re-run when previewEl or renderedMarkdown changes
     renderedMarkdown;
     if (previewEl) {
-      setTimeout(() => void fixImagesInNode(previewEl), 0);
+      // Disconnect old observer
+      if (imgObserver) { imgObserver.disconnect(); imgObserver = null; }
+      // Fix immediately (deferred for {@html} to render)
+      setTimeout(() => void fixImagesInNode(previewEl), 50);
+      // Also watch for future DOM changes
+      imgObserver = new MutationObserver(() => {
+        setTimeout(() => void fixImagesInNode(previewEl), 50);
+      });
+      imgObserver.observe(previewEl, { childList: true, subtree: true, attributes: true, attributeFilter: ['data-img-src'] });
     }
   });
 

@@ -26,12 +26,19 @@
 
   let renderedMarkdown = $derived(renderMarkdown(noteContent, currentNotePath ? dirName(currentNotePath) : undefined));
 
-  // ===== Effect: fix image srcs after markdown re-renders =====
+  // ===== Image fix: MutationObserver on preview element =====
   let previewEl = $state<HTMLDivElement | null>(null);
+  let imgObserver: MutationObserver | null = null;
+
   $effect(() => {
     renderedMarkdown;
     if (previewEl) {
-      setTimeout(() => void fixImagesInNode(previewEl), 0);
+      if (imgObserver) { imgObserver.disconnect(); imgObserver = null; }
+      setTimeout(() => void fixImagesInNode(previewEl), 50);
+      imgObserver = new MutationObserver(() => {
+        setTimeout(() => void fixImagesInNode(previewEl), 50);
+      });
+      imgObserver.observe(previewEl, { childList: true, subtree: true, attributes: true, attributeFilter: ['data-img-src'] });
     }
   });
 

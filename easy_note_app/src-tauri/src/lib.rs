@@ -247,6 +247,15 @@ fn hide_floating_window(app: AppHandle) -> Result<(), String> {
     }
 }
 
+#[tauri::command]
+fn debug_write(msg: String) {
+    // Write to Desktop for easy access
+    if let Some(home) = std::env::var_os("USERPROFILE") {
+        let path = std::path::Path::new(&home).join("Desktop").join("easynote_diag.txt");
+        let _ = std::fs::write(&path, msg);
+    }
+}
+
 fn ensure_quick_notes_folder(app: &AppHandle) -> Result<(), String> {
     let cfg = load_config(app);
     if let Some(root) = cfg.notes_root {
@@ -308,6 +317,7 @@ pub fn run() {
             hide_floating_window,
             write_binary_file,
             read_file_as_base64,
+            debug_write,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
