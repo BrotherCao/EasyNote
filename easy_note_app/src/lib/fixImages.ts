@@ -1,9 +1,5 @@
 import { invoke } from '@tauri-apps/api/core';
 
-/**
- * Fix img[data-img-src] elements: read the image file as base64 data URL.
- * This bypasses the asset protocol entirely, avoiding path encoding issues.
- */
 export async function fixImagesInNode(node: HTMLElement | null) {
   if (!node) return;
   const imgs = Array.from(node.querySelectorAll<HTMLImageElement>('img[data-img-src]'));

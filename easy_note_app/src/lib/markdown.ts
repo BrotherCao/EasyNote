@@ -22,8 +22,8 @@ md.renderer.rules.image = function (tokens, idx, options, env, self) {
   const token = tokens[idx];
   const srcIndex = token.attrIndex('src');
   if (srcIndex >= 0 && token.attrs) {
-    const srcVal = token.attrs[srcIndex]?.[1];
-    const src = typeof srcVal === 'string' ? srcVal : '';
+    let srcVal = token.attrs[srcIndex]?.[1];
+    let src = typeof srcVal === 'string' ? srcVal : '';
     if (
       src &&
       !src.startsWith('http://') &&
@@ -31,6 +31,8 @@ md.renderer.rules.image = function (tokens, idx, options, env, self) {
       !src.startsWith('asset:') &&
       !src.startsWith('data:')
     ) {
+      // markdown-it URL-encodes backslashes, decode first
+      try { src = decodeURIComponent(src); } catch { /* keep original if decode fails */ }
       // Check if src is already an absolute path (e.g. C:\Users\... or /home/...)
       const isAbsolute = /^[A-Za-z]:[\\/]/.test(src) || src.startsWith('/');
       const noteDir = env?.noteDir as string | undefined;
