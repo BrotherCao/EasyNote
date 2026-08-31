@@ -474,7 +474,7 @@
             <button class="btn-icon" onclick={() => showPreview = !showPreview} title={showPreview ? '隐藏预览' : '显示预览'}>
               {showPreview ? '👁' : '👁‍🗨'}
             </button>
-            <button class="btn-icon" onclick={() => showSyntaxHelp = !showSyntaxHelp} title="语法速查">
+            <button class="btn-icon" onclick={(e) => { e.stopPropagation(); showSyntaxHelp = !showSyntaxHelp; }} title="语法速查">
               ❓
             </button>
             <button class="btn-icon" onclick={() => void toggleTheme()} title="切换主题">
@@ -482,6 +482,58 @@
             </button>
           </div>
         </div>
+
+        {#if showSyntaxHelp}
+          <div class="syntax-help-overlay" onclick={() => showSyntaxHelp = false}>
+            <div class="syntax-help-panel" onclick={(e) => e.stopPropagation()}>
+              <div class="syntax-help-header">
+                <span>📋 语法速查</span>
+                <button class="btn-icon" onclick={() => showSyntaxHelp = false}>✕</button>
+              </div>
+              <div class="syntax-help-body">
+                <div class="syntax-section">
+                  <div class="syntax-section-title">基础语法</div>
+                  <div class="syntax-item"><code># 标题1</code><span class="syntax-desc">一级标题</span></div>
+                  <div class="syntax-item"><code>## 标题2</code><span class="syntax-desc">二级标题</span></div>
+                  <div class="syntax-item"><code>**粗体**</code><span class="syntax-desc"><b>粗体</b></span></div>
+                  <div class="syntax-item"><code>*斜体*</code><span class="syntax-desc"><i>斜体</i></span></div>
+                  <div class="syntax-item"><code>~~删除线~~</code><span class="syntax-desc"><s>删除线</s></span></div>
+                  <div class="syntax-item"><code>> 引用</code><span class="syntax-desc">引用块</span></div>
+                  <div class="syntax-item"><code>---</code><span class="syntax-desc">分割线</span></div>
+                </div>
+                <div class="syntax-section">
+                  <div class="syntax-section-title">列表</div>
+                  <div class="syntax-item"><code>- 无序列表项</code><span class="syntax-desc">无序列表</span></div>
+                  <div class="syntax-item"><code>1. 有序列表项</code><span class="syntax-desc">有序列表</span></div>
+                  <div class="syntax-item"><code>- [ ] 待办</code><span class="syntax-desc">待办事项</span></div>
+                  <div class="syntax-item"><code>- [x] 已完成</code><span class="syntax-desc">已完成</span></div>
+                </div>
+                <div class="syntax-section">
+                  <div class="syntax-section-title">链接与图片</div>
+                  <div class="syntax-item"><code>[文字](URL)</code><span class="syntax-desc">链接</span></div>
+                  <div class="syntax-item"><code>![描述](图片路径)</code><span class="syntax-desc">图片</span></div>
+                </div>
+                <div class="syntax-section">
+                  <div class="syntax-section-title">代码</div>
+                  <div class="syntax-item"><code>`行内代码`</code><span class="syntax-desc"><code>行内代码</code></span></div>
+                  <div class="syntax-item"><code>```语言</code><span class="syntax-desc">代码块</span></div>
+                </div>
+                <div class="syntax-section">
+                  <div class="syntax-section-title">数学公式 (KaTeX)</div>
+                  <div class="syntax-item"><code>$E=mc^2$</code><span class="syntax-desc">行内公式</span></div>
+                  <div class="syntax-item"><code>$$公式$$</code><span class="syntax-desc">块级公式</span></div>
+                  <div class="syntax-item"><code>\frac{a}{b}</code><span class="syntax-desc">分数</span></div>
+                  <div class="syntax-item"><code>\sqrt{x}</code><span class="syntax-desc">根号</span></div>
+                  <div class="syntax-item"><code>\sum_{i=1}^{n}</code><span class="syntax-desc">求和</span></div>
+                  <div class="syntax-item"><code>\int_a^b</code><span class="syntax-desc">积分</span></div>
+                  <div class="syntax-item"><code>x^{n}</code><span class="syntax-desc">上标</span></div>
+                  <div class="syntax-item"><code>x_{n}</code><span class="syntax-desc">下标</span></div>
+                  <div class="syntax-item"><code>\alpha \beta</code><span class="syntax-desc">α β</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        {/if}
 
         <div class="editor-preview" class:hidden-preview={!showPreview}>
           <div class="editor-pane">
@@ -513,72 +565,6 @@
         </div>
       {/if}
     </main>
-  </div>
-{/if}
-
-<!-- ===== Syntax help overlay ===== -->
-{#if showSyntaxHelp}
-  <div class="syntax-help-overlay" onclick={() => showSyntaxHelp = false}>
-    <div class="syntax-help-panel" onclick={(e) => e.stopPropagation()}>
-      <div class="syntax-help-header">
-        <span>📋 语法速查</span>
-        <button class="btn-icon" onclick={() => showSyntaxHelp = false}>✕</button>
-      </div>
-      <div class="syntax-help-body">
-        <div class="syntax-section">
-          <div class="syntax-section-title">基础语法</div>
-          <div class="syntax-item"><code># 标题1</code><span class="syntax-desc">一级标题</span></div>
-          <div class="syntax-item"><code>## 标题2</code><span class="syntax-desc">二级标题</span></div>
-          <div class="syntax-item"><code>**粗体**</code><span class="syntax-desc"><b>粗体</b></span></div>
-          <div class="syntax-item"><code>*斜体*</code><span class="syntax-desc"><i>斜体</i></span></div>
-          <div class="syntax-item"><code>~~删除线~~</code><span class="syntax-desc"><s>删除线</s></span></div>
-          <div class="syntax-item"><code>> 引用</code><span class="syntax-desc">引用块</span></div>
-          <div class="syntax-item"><code>---</code><span class="syntax-desc">分割线</span></div>
-        </div>
-        <div class="syntax-section">
-          <div class="syntax-section-title">列表</div>
-          <div class="syntax-item"><code>- 无序列表项</code><span class="syntax-desc">无序列表</span></div>
-          <div class="syntax-item"><code>1. 有序列表项</code><span class="syntax-desc">有序列表</span></div>
-          <div class="syntax-item"><code>- [ ] 待办</code><span class="syntax-desc">待办事项</span></div>
-          <div class="syntax-item"><code>- [x] 已完成</code><span class="syntax-desc">已完成</span></div>
-        </div>
-        <div class="syntax-section">
-          <div class="syntax-section-title">链接与图片</div>
-          <div class="syntax-item"><code>[文字](URL)</code><span class="syntax-desc">链接</span></div>
-          <div class="syntax-item"><code>![描述](图片路径)</code><span class="syntax-desc">图片</span></div>
-          <div class="syntax-desc" style="font-size: 11px; color: var(--fg-tertiary); margin-top: 2px;">支持相对路径 images/x.png 和绝对路径 C:\...</div>
-        </div>
-        <div class="syntax-section">
-          <div class="syntax-section-title">代码</div>
-          <div class="syntax-item"><code>`行内代码`</code><span class="syntax-desc"><code>行内代码</code></span></div>
-          <div class="syntax-item"><code>```语言</code><span class="syntax-desc">代码块</span></div>
-          <div class="syntax-item"><code>```</code><span class="syntax-desc">结束代码块</span></div>
-        </div>
-        <div class="syntax-section">
-          <div class="syntax-section-title">表格</div>
-          <div class="syntax-item"><code>| 列1 | 列2 |</code><span class="syntax-desc">表头</span></div>
-          <div class="syntax-item"><code>|---|---|</code><span class="syntax-desc">分隔行</span></div>
-          <div class="syntax-item"><code>| 内容 | 内容 |</code><span class="syntax-desc">数据行</span></div>
-        </div>
-        <div class="syntax-section">
-          <div class="syntax-section-title">数学公式 (KaTeX)</div>
-          <div class="syntax-item"><code>$E=mc^2$</code><span class="syntax-desc">行内公式</span></div>
-          <div class="syntax-item"><code>$$公式$$</code><span class="syntax-desc">块级公式</span></div>
-          <div class="syntax-item"><code>\frac{a}{b}</code><span class="syntax-desc">分数 a/b</span></div>
-          <div class="syntax-item"><code>\sqrt{x}</code><span class="syntax-desc">根号 √x</span></div>
-          <div class="syntax-item"><code>\sum_{i=1}^{n}</code><span class="syntax-desc">求和 Σ</span></div>
-          <div class="syntax-item"><code>\int_a^b</code><span class="syntax-desc">积分 ∫</span></div>
-          <div class="syntax-item"><code>x^{n}</code><span class="syntax-desc">上标 xⁿ</span></div>
-          <div class="syntax-item"><code>x_{n}</code><span class="syntax-desc">下标 xₙ</span></div>
-          <div class="syntax-item"><code>\alpha \beta \gamma</code><span class="syntax-desc">希腊字母 α β γ</span></div>
-          <div class="syntax-item"><code>\infty</code><span class="syntax-desc">无穷 ∞</span></div>
-          <div class="syntax-item"><code>\leq \geq</code><span class="syntax-desc">≤ ≥</span></div>
-          <div class="syntax-item"><code>\neq</code><span class="syntax-desc">≠</span></div>
-          <div class="syntax-item"><code>\rightarrow \Rightarrow</code><span class="syntax-desc">→ ⇒</span></div>
-          <div class="syntax-item"><code>\begin{matrix}a&b\\c&d\end{matrix}</code><span class="syntax-desc">矩阵</span></div>
-        </div>
-      </div>
-    </div>
   </div>
 {/if}
 
