@@ -31,8 +31,10 @@ md.renderer.rules.image = function (tokens, idx, options, env, self) {
       !src.startsWith('asset:') &&
       !src.startsWith('data:')
     ) {
+      // Check if src is already an absolute path (e.g. C:\Users\... or /home/...)
+      const isAbsolute = /^[A-Za-z]:[\\/]/.test(src) || src.startsWith('/');
       const noteDir = env?.noteDir as string | undefined;
-      const absPath = noteDir ? joinPathNormalized(noteDir, src) : src;
+      const absPath = (!isAbsolute && noteDir) ? joinPathNormalized(noteDir, src) : src;
       token.attrSet('data-img-src', absPath);
       token.attrs![srcIndex][1] = '';
     }
