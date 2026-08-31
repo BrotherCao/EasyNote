@@ -19,6 +19,7 @@
   let noteContent = $state('');
   let noteName = $state('');
   let showPreview = $state(false);
+  let showSyntaxHelp = $state(false);
   let saving = $state(false);
   let lastSaved = $state<number | null>(null);
   let saveTimer: ReturnType<typeof setTimeout> | null = null;
@@ -203,9 +204,53 @@
       >
         {showPreview ? '✏️' : '👁'}
       </button>
+      <button
+        class="btn-icon"
+        onclick={() => showSyntaxHelp = !showSyntaxHelp}
+        title="语法速查"
+      >
+        ❓
+      </button>
       <button class="btn-icon" onclick={() => void close()} title="关闭 (Esc)">✕</button>
     </div>
   </div>
+
+  {#if showSyntaxHelp}
+    <div class="syntax-help-overlay" onclick={() => showSyntaxHelp = false}>
+      <div class="syntax-help-panel" onclick={(e) => e.stopPropagation()}>
+        <div class="syntax-help-header">
+          <span>📋 语法速查</span>
+          <button class="btn-icon" onclick={() => showSyntaxHelp = false}>✕</button>
+        </div>
+        <div class="syntax-help-body">
+          <div class="syntax-section">
+            <div class="syntax-section-title">基础</div>
+            <div class="syntax-item"><code># H1</code><span class="syntax-desc">标题</span></div>
+            <div class="syntax-item"><code>**粗**</code><span class="syntax-desc"><b>粗体</b></span></div>
+            <div class="syntax-item"><code>*斜*</code><span class="syntax-desc"><i>斜体</i></span></div>
+            <div class="syntax-item"><code>~~删~~</code><span class="syntax-desc"><s>删除</s></span></div>
+            <div class="syntax-item"><code>- 项</code><span class="syntax-desc">列表</span></div>
+            <div class="syntax-item"><code>- [ ]</code><span class="syntax-desc">待办</span></div>
+            <div class="syntax-item"><code>![](url)</code><span class="syntax-desc">图片</span></div>
+            <div class="syntax-item"><code>[](url)</code><span class="syntax-desc">链接</span></div>
+            <div class="syntax-item"><code>```py</code><span class="syntax-desc">代码块</span></div>
+          </div>
+          <div class="syntax-section">
+            <div class="syntax-section-title">公式</div>
+            <div class="syntax-item"><code>$E=mc^2$</code><span class="syntax-desc">行内</span></div>
+            <div class="syntax-item"><code>$$..$$</code><span class="syntax-desc">块级</span></div>
+            <div class="syntax-item"><code>\frac{a}{b}</code><span class="syntax-desc">分数</span></div>
+            <div class="syntax-item"><code>\sqrt{x}</code><span class="syntax-desc">根号</span></div>
+            <div class="syntax-item"><code>\sum_{i=1}^n</code><span class="syntax-desc">求和</span></div>
+            <div class="syntax-item"><code>\int_a^b</code><span class="syntax-desc">积分</span></div>
+            <div class="syntax-item"><code>x^{n}</code><span class="syntax-desc">上标</span></div>
+            <div class="syntax-item"><code>x_{n}</code><span class="syntax-desc">下标</span></div>
+            <div class="syntax-item"><code>\alpha \beta</code><span class="syntax-desc">α β</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  {/if}
 
   {#if currentNotePath}
     <div class="floating-editor">
@@ -279,4 +324,76 @@
   }
   .empty-icon { font-size: 28px; }
   .empty-text { font-size: 13px; }
+  .syntax-help-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+  }
+  .syntax-help-panel {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    width: 300px;
+    max-height: 400px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .syntax-help-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .syntax-help-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px 12px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 16px;
+  }
+  .syntax-section {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .syntax-section-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 2px;
+    padding-bottom: 2px;
+    border-bottom: 1px solid var(--border);
+  }
+  .syntax-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4px;
+    font-size: 11px;
+    padding: 1px 0;
+  }
+  .syntax-item code {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    padding: 1px 4px;
+    background: var(--bg-tertiary);
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+  .syntax-desc {
+    font-size: 10px;
+    color: var(--fg-secondary);
+    text-align: right;
+    flex-shrink: 0;
+  }
 </style>
