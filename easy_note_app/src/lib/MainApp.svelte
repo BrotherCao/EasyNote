@@ -474,7 +474,7 @@
             <button class="btn-icon" onclick={() => showPreview = !showPreview} title={showPreview ? '隐藏预览' : '显示预览'}>
               {showPreview ? '👁' : '👁‍🗨'}
             </button>
-            <button class="btn-icon" onclick={(e) => { e.stopPropagation(); showSyntaxHelp = !showSyntaxHelp; }} title="语法速查">
+            <button class="btn-icon" onclick={() => showSyntaxHelp = !showSyntaxHelp} title="语法速查">
               ❓
             </button>
             <button class="btn-icon" onclick={() => void toggleTheme()} title="切换主题">
