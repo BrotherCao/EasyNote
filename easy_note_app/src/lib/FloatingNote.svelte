@@ -19,7 +19,6 @@
   let noteContent = $state('');
   let noteName = $state('');
   let showPreview = $state(false);
-  let showSyntaxHelp = $state(false);
   let saving = $state(false);
   let lastSaved = $state<number | null>(null);
   let saveTimer: ReturnType<typeof setTimeout> | null = null;
@@ -206,8 +205,8 @@
       </button>
       <button
         class="btn-icon"
-        onclick={() => showSyntaxHelp = !showSyntaxHelp}
         title="语法速查"
+        onclick={() => { const e = document.getElementById('floating-syntax-help'); if (e) e.style.display = e.style.display === 'none' ? 'block' : 'none'; }}
       >
         ❓
       </button>
@@ -215,12 +214,12 @@
     </div>
   </div>
 
-  {#if showSyntaxHelp}
-    <div class="syntax-help-overlay" onclick={() => showSyntaxHelp = false}>
+  <div id="floating-syntax-help" style="display:none">
+    <div class="syntax-help-overlay" onclick={() => { if (event.target === document.getElementById('floating-syntax-help')?.querySelector('.syntax-help-overlay')) { document.getElementById('floating-syntax-help')!.style.display = 'none'; } }}>
       <div class="syntax-help-panel" onclick={(e) => e.stopPropagation()}>
         <div class="syntax-help-header">
           <span>📋 语法速查</span>
-          <button class="btn-icon" onclick={() => showSyntaxHelp = false}>✕</button>
+          <button class="btn-icon" onclick={() => { const e = document.getElementById('floating-syntax-help'); if (e) e.style.display = 'none'; }}>✕</button>
         </div>
         <div class="syntax-help-body">
           <div class="syntax-section">
@@ -250,7 +249,7 @@
         </div>
       </div>
     </div>
-  {/if}
+  </div>
 
   {#if currentNotePath}
     <div class="floating-editor">

@@ -23,7 +23,6 @@
   let noteContent = $state('');
   let showSetup = $state(false);
   let showPreview = $state(true);
-  let showSyntaxHelp = $state(false);
   let saving = $state(false);
   let lastSaved = $state<number | null>(null);
   let isLoading = $state(false);
@@ -76,26 +75,11 @@
       }
     });
 
-    // Syntax help - native DOM, no Svelte state/event delegation
-    const helpContainer = document.getElementById('syntax-help-container');
-    const helpBtn = document.getElementById('btn-syntax-help');
-    const helpClose = document.getElementById('syntax-help-close');
-    const helpOverlay = document.getElementById('syntax-help-overlay');
-    const helpPanel = document.getElementById('syntax-help-panel');
-
-    function toggleHelp() {
-      if (!helpContainer) return;
-      const cur = helpContainer.style.display;
-      helpContainer.style.display = cur === 'none' ? 'block' : 'none';
-    }
-
-    if (helpBtn) helpBtn.addEventListener('click', (e) => { e.preventDefault(); toggleHelp(); });
-    if (helpClose) helpClose.addEventListener('click', (e) => { e.preventDefault(); toggleHelp(); });
-    if (helpOverlay) helpOverlay.addEventListener('click', (e) => {
-      if (e.target === helpOverlay) { e.preventDefault(); toggleHelp(); }
-    });
-    // Prevent clicks inside panel from closing
-    if (helpPanel) helpPanel.addEventListener('click', (e) => { e.stopPropagation(); });
+    // Syntax help: global function for inline onclick
+    (window as any).toggleSyntaxHelp = function() {
+      const c = document.getElementById('syntax-help-container');
+      if (c) c.style.display = c.style.display === 'none' ? 'block' : 'none';
+    };
 
     return () => { void unlisten.then((fn) => fn()); };
   });
@@ -495,7 +479,7 @@
             <button class="btn-icon" onclick={() => showPreview = !showPreview} title={showPreview ? '隐藏预览' : '显示预览'}>
               {showPreview ? '👁' : '👁‍🗨'}
             </button>
-            <button id="btn-syntax-help" class="btn-icon" title="语法速查">❓</button>
+            <button id="btn-syntax-help" class="btn-icon" title="语法速查" onclick={() => (window as any).toggleSyntaxHelp()}>❓</button>
             <button class="btn-icon" onclick={() => void toggleTheme()} title="切换主题">
               {currentTheme === 'dark' ? '☀' : '🌙'}
             </button>
@@ -503,11 +487,11 @@
         </div>
 
         <div id="syntax-help-container" style="display:none">
-          <div class="syntax-help-overlay" id="syntax-help-overlay">
+          <div class="syntax-help-overlay" id="syntax-help-overlay" onclick={() => { if (event.target === document.getElementById('syntax-help-overlay')) (window as any).toggleSyntaxHelp(); }}>
             <div class="syntax-help-panel" id="syntax-help-panel">
               <div class="syntax-help-header">
                 <span>📋 语法速查</span>
-                <button class="btn-icon" id="syntax-help-close">✕</button>
+                <button class="btn-icon" id="syntax-help-close" onclick={() => (window as any).toggleSyntaxHelp()}>✕</button>
               </div>
               <div class="syntax-help-body">
                 <div class="syntax-section">
