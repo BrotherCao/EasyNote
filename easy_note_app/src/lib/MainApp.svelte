@@ -487,7 +487,7 @@
         </div>
 
         <div id="syntax-help-container" style="display:none">
-          <div class="syntax-help-overlay" id="syntax-help-overlay" onclick={() => { if (event.target === document.getElementById('syntax-help-overlay')) (window as any).toggleSyntaxHelp(); }}>
+          <div class="syntax-help-overlay" id="syntax-help-overlay" onclick={(e) => { if (e.target === document.getElementById('syntax-help-overlay')) (window as any).toggleSyntaxHelp(); }}>
             <div class="syntax-help-panel" id="syntax-help-panel">
               <div class="syntax-help-header">
                 <span>📋 语法速查</span>
@@ -525,12 +525,12 @@
                   <div class="syntax-section-title">数学公式 (KaTeX)</div>
                   <div class="syntax-item"><code>$E=mc^2$</code><span class="syntax-desc">行内公式</span></div>
                   <div class="syntax-item"><code>$$公式$$</code><span class="syntax-desc">块级公式</span></div>
-                  <div class="syntax-item"><code>\frac{a}{b}</code><span class="syntax-desc">分数</span></div>
-                  <div class="syntax-item"><code>\sqrt{x}</code><span class="syntax-desc">根号</span></div>
-                  <div class="syntax-item"><code>\sum_{i=1}^{n}</code><span class="syntax-desc">求和</span></div>
+                  <div class="syntax-item"><code>\frac&#123;a&#125;&#123;b&#125;</code><span class="syntax-desc">分数</span></div>
+                  <div class="syntax-item"><code>\sqrt&#123;x&#125;</code><span class="syntax-desc">根号</span></div>
+                  <div class="syntax-item"><code>\sum_&#123;i=1&#125;^&#123;n&#125;</code><span class="syntax-desc">求和</span></div>
                   <div class="syntax-item"><code>\int_a^b</code><span class="syntax-desc">积分</span></div>
-                  <div class="syntax-item"><code>x^{n}</code><span class="syntax-desc">上标</span></div>
-                  <div class="syntax-item"><code>x_{n}</code><span class="syntax-desc">下标</span></div>
+                  <div class="syntax-item"><code>x^&#123;n&#125;</code><span class="syntax-desc">上标</span></div>
+                  <div class="syntax-item"><code>x_&#123;n&#125;</code><span class="syntax-desc">下标</span></div>
                   <div class="syntax-item"><code>\alpha \beta</code><span class="syntax-desc">α β</span></div>
                 </div>
               </div>
