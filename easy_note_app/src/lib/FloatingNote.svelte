@@ -238,13 +238,23 @@
             <div class="syntax-section-title">公式</div>
             <div class="syntax-item"><code>$E=mc^2$</code><span class="syntax-desc">行内</span></div>
             <div class="syntax-item"><code>$$..$$</code><span class="syntax-desc">块级</span></div>
+            <div class="syntax-item"><code>x^&#123;n&#125;</code><span class="syntax-desc">上标</span></div>
+            <div class="syntax-item"><code>x_&#123;n&#125;</code><span class="syntax-desc">下标</span></div>
             <div class="syntax-item"><code>\frac&#123;a&#125;&#123;b&#125;</code><span class="syntax-desc">分数</span></div>
             <div class="syntax-item"><code>\sqrt&#123;x&#125;</code><span class="syntax-desc">根号</span></div>
             <div class="syntax-item"><code>\sum_&#123;i=1&#125;^n</code><span class="syntax-desc">求和</span></div>
             <div class="syntax-item"><code>\int_a^b</code><span class="syntax-desc">积分</span></div>
-            <div class="syntax-item"><code>x^&#123;n&#125;</code><span class="syntax-desc">上标</span></div>
-            <div class="syntax-item"><code>x_&#123;n&#125;</code><span class="syntax-desc">下标</span></div>
-            <div class="syntax-item"><code>\alpha \beta</code><span class="syntax-desc">α β</span></div>
+            <div class="syntax-item"><code>\lim_&#123;x\to\infty&#125;</code><span class="syntax-desc">极限</span></div>
+          </div>
+          <div class="syntax-section">
+            <div class="syntax-section-title">公式 · 符号</div>
+            <div class="syntax-item"><code>\alpha \beta \pi</code><span class="syntax-desc">α β π</span></div>
+            <div class="syntax-item"><code>\leq \neq</code><span class="syntax-desc">≤ ≠</span></div>
+            <div class="syntax-item"><code>\pm \times</code><span class="syntax-desc">± ×</span></div>
+            <div class="syntax-item"><code>\infty</code><span class="syntax-desc">∞</span></div>
+            <div class="syntax-item"><code>\sin \cos</code><span class="syntax-desc">sin cos</span></div>
+            <div class="syntax-item"><code>\hat&#123;x&#125; \vec&#123;v&#125;</code><span class="syntax-desc">修饰</span></div>
+            <div class="syntax-item"><code>\begin&#123;pmatrix&#125;</code><span class="syntax-desc">矩阵</span></div>
           </div>
         </div>
       </div>

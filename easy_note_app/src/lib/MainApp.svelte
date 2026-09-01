@@ -522,16 +522,74 @@
                   <div class="syntax-item"><code>```语言</code><span class="syntax-desc">代码块</span></div>
                 </div>
                 <div class="syntax-section">
-                  <div class="syntax-section-title">数学公式 (KaTeX)</div>
+                  <div class="syntax-section-title">数学公式 · 基础</div>
                   <div class="syntax-item"><code>$E=mc^2$</code><span class="syntax-desc">行内公式</span></div>
                   <div class="syntax-item"><code>$$公式$$</code><span class="syntax-desc">块级公式</span></div>
-                  <div class="syntax-item"><code>\frac&#123;a&#125;&#123;b&#125;</code><span class="syntax-desc">分数</span></div>
-                  <div class="syntax-item"><code>\sqrt&#123;x&#125;</code><span class="syntax-desc">根号</span></div>
-                  <div class="syntax-item"><code>\sum_&#123;i=1&#125;^&#123;n&#125;</code><span class="syntax-desc">求和</span></div>
-                  <div class="syntax-item"><code>\int_a^b</code><span class="syntax-desc">积分</span></div>
                   <div class="syntax-item"><code>x^&#123;n&#125;</code><span class="syntax-desc">上标</span></div>
                   <div class="syntax-item"><code>x_&#123;n&#125;</code><span class="syntax-desc">下标</span></div>
-                  <div class="syntax-item"><code>\alpha \beta</code><span class="syntax-desc">α β</span></div>
+                  <div class="syntax-item"><code>\frac&#123;a&#125;&#123;b&#125;</code><span class="syntax-desc">分数</span></div>
+                  <div class="syntax-item"><code>\sqrt&#123;x&#125;</code><span class="syntax-desc">根号</span></div>
+                  <div class="syntax-item"><code>\sqrt[n]&#123;x&#125;</code><span class="syntax-desc">n 次根</span></div>
+                  <div class="syntax-item"><code>\binom&#123;n&#125;&#123;k&#125;</code><span class="syntax-desc">组合数</span></div>
+                </div>
+                <div class="syntax-section">
+                  <div class="syntax-section-title">数学公式 · 求和与积分</div>
+                  <div class="syntax-item"><code>\sum_&#123;i=1&#125;^&#123;n&#125;</code><span class="syntax-desc">求和</span></div>
+                  <div class="syntax-item"><code>\prod_&#123;i=1&#125;^&#123;n&#125;</code><span class="syntax-desc">连乘</span></div>
+                  <div class="syntax-item"><code>\int_a^b f(x)\,dx</code><span class="syntax-desc">定积分</span></div>
+                  <div class="syntax-item"><code>\iint</code><span class="syntax-desc">二重积分</span></div>
+                  <div class="syntax-item"><code>\oint</code><span class="syntax-desc">环路积分</span></div>
+                  <div class="syntax-item"><code>\lim_&#123;x \to \infty&#125;</code><span class="syntax-desc">极限</span></div>
+                  <div class="syntax-item"><code>\frac&#123;d&#125;&#123;dx&#125;</code><span class="syntax-desc">导数</span></div>
+                  <div class="syntax-item"><code>\partial</code><span class="syntax-desc">偏导</span></div>
+                </div>
+                <div class="syntax-section">
+                  <div class="syntax-section-title">数学公式 · 希腊字母</div>
+                  <div class="syntax-item"><code>\alpha \beta \gamma</code><span class="syntax-desc">α β γ</span></div>
+                  <div class="syntax-item"><code>\delta \epsilon \theta</code><span class="syntax-desc">δ ϵ θ</span></div>
+                  <div class="syntax-item"><code>\lambda \mu \pi</code><span class="syntax-desc">λ μ π</span></div>
+                  <div class="syntax-item"><code>\sigma \phi \omega</code><span class="syntax-desc">σ φ ω</span></div>
+                  <div class="syntax-item"><code>\Gamma \Delta</code><span class="syntax-desc">Γ Δ</span></div>
+                  <div class="syntax-item"><code>\Sigma \Omega</code><span class="syntax-desc">Σ Ω</span></div>
+                  <div class="syntax-item"><code>\infty \nabla</code><span class="syntax-desc">∞ ∇</span></div>
+                </div>
+                <div class="syntax-section">
+                  <div class="syntax-section-title">数学公式 · 运算符与关系</div>
+                  <div class="syntax-item"><code>\pm \times \div</code><span class="syntax-desc">± × ÷</span></div>
+                  <div class="syntax-item"><code>\cdot \circ</code><span class="syntax-desc">· ∘</span></div>
+                  <div class="syntax-item"><code>\leq \geq \neq</code><span class="syntax-desc">≤ ≥ ≠</span></div>
+                  <div class="syntax-item"><code>\approx \equiv \propto</code><span class="syntax-desc">≈ ≡ ∝</span></div>
+                  <div class="syntax-item"><code>\lt \gt</code><span class="syntax-desc">&lt; &gt;</span></div>
+                  <div class="syntax-item"><code>\in \notin \ni</code><span class="syntax-desc">∈ ∉ ∋</span></div>
+                </div>
+                <div class="syntax-section">
+                  <div class="syntax-section-title">数学公式 · 集合与逻辑</div>
+                  <div class="syntax-item"><code>\subset \subseteq</code><span class="syntax-desc">⊂ ⊆</span></div>
+                  <div class="syntax-item"><code>\cup \cap</code><span class="syntax-desc">∪ ∩</span></div>
+                  <div class="syntax-item"><code>\forall \exists</code><span class="syntax-desc">∀ ∃</span></div>
+                  <div class="syntax-item"><code>\emptyset \mathbb&#123;R&#125;</code><span class="syntax-desc">∅ ℝ</span></div>
+                  <div class="syntax-item"><code>\land \lor \neg</code><span class="syntax-desc">∧ ∨ ¬</span></div>
+                  <div class="syntax-item"><code>\Rightarrow \Leftrightarrow</code><span class="syntax-desc">⇒ ⇔</span></div>
+                  <div class="syntax-item"><code>\to \mapsto</code><span class="syntax-desc">→ ↦</span></div>
+                </div>
+                <div class="syntax-section">
+                  <div class="syntax-section-title">数学公式 · 函数与修饰</div>
+                  <div class="syntax-item"><code>\sin \cos \tan</code><span class="syntax-desc">三角函数</span></div>
+                  <div class="syntax-item"><code>\log \ln \exp</code><span class="syntax-desc">对数 / 指数</span></div>
+                  <div class="syntax-item"><code>\max \min</code><span class="syntax-desc">最值</span></div>
+                  <div class="syntax-item"><code>\hat&#123;x&#125; \bar&#123;x&#125;</code><span class="syntax-desc">帽子 / 横线</span></div>
+                  <div class="syntax-item"><code>\vec&#123;v&#125;</code><span class="syntax-desc">向量</span></div>
+                  <div class="syntax-item"><code>\dot&#123;x&#125; \ddot&#123;x&#125;</code><span class="syntax-desc">一阶 / 二阶点</span></div>
+                  <div class="syntax-item"><code>\overline&#123;AB&#125; \underline&#123;x&#125;</code><span class="syntax-desc">上 / 下划线</span></div>
+                </div>
+                <div class="syntax-section">
+                  <div class="syntax-section-title">数学公式 · 括号与矩阵</div>
+                  <div class="syntax-item"><code>\left( \frac&#123;a&#125;&#123;b&#125; \right)</code><span class="syntax-desc">自适应括号</span></div>
+                  <div class="syntax-item"><code>\begin&#123;pmatrix&#125;</code><span class="syntax-desc">圆括号矩阵</span></div>
+                  <div class="syntax-item"><code>\begin&#123;bmatrix&#125;</code><span class="syntax-desc">方括号矩阵</span></div>
+                  <div class="syntax-item"><code>\begin&#123;cases&#125;</code><span class="syntax-desc">分段函数</span></div>
+                  <div class="syntax-item"><code>\begin&#123;vmatrix&#125;</code><span class="syntax-desc">行列式</span></div>
+                  <div class="syntax-item"><code>a & b \\ c & d</code><span class="syntax-desc">分列 · 换行</span></div>
                 </div>
               </div>
             </div>
