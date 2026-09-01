@@ -266,7 +266,19 @@ pub fn run() {
         .manage(CurrentNote(Mutex::new(None)))
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_dialog::init())
-        .plugin(tauri_plugin_window_state::Builder::default().build())
+        .plugin(
+            tauri_plugin_window_state::Builder::default()
+                // Do not persist/restore window visibility: the floating window is
+                // configured with `visible: false` and must never auto-show on launch.
+                .with_state_flags(
+                    tauri_plugin_window_state::StateFlags::SIZE
+                        | tauri_plugin_window_state::StateFlags::POSITION
+                        | tauri_plugin_window_state::StateFlags::MAXIMIZED
+                        | tauri_plugin_window_state::StateFlags::DECORATIONS
+                        | tauri_plugin_window_state::StateFlags::FULLSCREEN,
+                )
+                .build(),
+        )
         .plugin(
             tauri_plugin_global_shortcut::Builder::new()
                 .with_handler(move |app, _shortcut, event| {
@@ -284,7 +296,9 @@ pub fn run() {
                 .build(),
         )
         .setup(move |app| {
-            app.global_shortcut().register(shortcut)?;
+            // Best-effort: fail gracefully instead of panicking (aborting the app)
+            // when the global shortcut is already registered by another process.
+            let _ = app.global_shortcut().register(shortcut);
             if let Some(floating) = app.get_webview_window("floating") {
                 let _ = floating.hide();
             }
