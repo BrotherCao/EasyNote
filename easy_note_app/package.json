@@ -16,9 +16,9 @@
     "@tauri-apps/api": "^2",
     "@tauri-apps/plugin-dialog": "^2.7.2",
     "@tauri-apps/plugin-opener": "^2",
+    "@vscode/markdown-it-katex": "^1.1.2",
     "katex": "^0.18.4",
-    "markdown-it": "^15.0.0",
-    "markdown-it-katex": "^2.0.3"
+    "markdown-it": "^15.0.0"
   },
   "devDependencies": {
     "@sveltejs/adapter-static": "^3.0.6",

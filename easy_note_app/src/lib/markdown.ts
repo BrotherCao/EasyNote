@@ -1,6 +1,5 @@
 import MarkdownIt from 'markdown-it';
-// @ts-expect-error - markdown-it-katex has no types
-import katexPlugin from 'markdown-it-katex';
+import katexPlugin from '@vscode/markdown-it-katex';
 
 const md = new MarkdownIt({
   html: false,
@@ -10,7 +9,7 @@ const md = new MarkdownIt({
 });
 
 // KaTeX math formula support ($...$ inline, $$...$$ block)
-md.use(katexPlugin);
+md.use(katexPlugin, { throwOnError: false });
 
 // Image renderer: store absolute path in data-img-src, fix src in post-processing (Svelte action)
 const defaultImageRender = md.renderer.rules.image ||
